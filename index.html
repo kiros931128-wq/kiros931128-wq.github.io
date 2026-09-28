@@ -69,6 +69,11 @@
     .fin { max-width:280px; color:var(--muted); font-size:15px; line-height:1.9; opacity:0; transition:opacity .8s; }
     .fin.show { opacity:1; }
     footer { text-align:center; color:var(--muted); font-size:12px; letter-spacing:.16em; }
+    .lyric { min-height:4.8em; margin-top:14px; text-align:center; font-size:17px; line-height:1.85; color:var(--cream); }
+    .lyric span { display:block; opacity:0; transition:opacity .45s ease; }
+    .lyric span.on { opacity:1; color:var(--rose); }
+    .meet { opacity:0; transform:translateY(10px); transition:opacity .55s ease, transform .55s ease; }
+    .meet.in { opacity:1; transform:none; }
   </style>
 </head>
 <body>
@@ -98,8 +103,8 @@
     <article class="card letter">
       <p>詩琴：</p>
       <p>今天是你的生日。人還在新加坡，禮物還沒交到你手上。先把這一頁打開。</p>
-      <p>我想清楚，是從那晚開始的。你母親出事，你主動找我，把焦慮和不安說出來。後來是你的早安，是語音裡的晚安。我不了解你的全部過去，可是我不在乎。我在乎的是未來。我想和你在一起。</p>
-      <p>九月一日那通電話裡說過的話，今天還算數：赤繩早繫，白首永偏。往後餘生，請多多指教。</p>
+      <p>九月一日那通電話，我想清楚了。或許是你母親出車禍那晚，你主動聯繫我，把焦慮和不安說出來；也或許是平時的早安，語音裡的晚安。這些點滴讓我確定，我想和你在一起。我不了解你的過去，可是我不在乎。我在乎的是我們的未來。我想和你在一起。你呢。</p>
+      <p>赤繩早繫，白首永偏。縦然浮生如夢，百年如露，此情也當海枯石爛，無窮無盡。謹訂此約，往後餘生，請多多指教。</p>
       <p>伏見稲荷買的那條手鍊，代表守護。等你回來，親手給你。在那之前，先用這一頁把心放過來。</p>
       <p>生日快樂。願我能和你一起面對快樂與痛苦。從此以後，做你的太陽。</p>
       <p class="sign">紹禎　敬上</p>
@@ -148,23 +153,26 @@
     <p class="label">第一次唱給你聽</p>
     <div class="card">
       <p class="cap" style="margin-top:0">八月二十二日 · 剛好遇見你</p>
-      <audio controls preload="metadata" playsinline><source src="song.m4a" type="audio/mp4" /></audio>
+      <audio id="song" controls preload="metadata" playsinline>
+        <source src="song.m4a" type="audio/mp4" />
+      </audio>
+      <p class="lyric" id="lyric"></p>
     </div>
   </section>
   <section>
     <p class="label">想對你說</p>
     <div class="wishes">
       <div class="wish">願你被好好對待，不必一個人硬撐。</div>
-      <div class="wish">願媽媽一天天好起來，願家裡漸漸安定。</div>
-      <div class="wish">願這條手鍊到你手上時，我們已經見過面。</div>
-      <div class="wish">願未來比過去清楚。我想和你在一起。</div>
+      <div class="wish">願阿婆早日康復，願家裡漸漸安定。</div>
+      <div class="wish">願這條手鍊交到你手上時，我們已經見過面。</div>
+      <div class="wish">願往後的路走得清楚。我想和你在一起。</div>
     </div>
   </section>
   <section class="end">
     <p class="script">Stay</p>
     <p class="label">把掌心放在圓上</p>
     <button class="pulse-btn" id="pulse" type="button">長按收下</button>
-    <p class="fin" id="fin">信收到了。<br>守護先放在這裡。<br>人回來，手鍊也回來。</p>
+    <p class="fin" id="fin">信收到了。<br>守護先放在這裡。<br>人回來，手鍊也回來。<br>期待我們的第一次見面。</p>
   </section>
   <footer>為詩琴而寫　九月三十日</footer>
 </main>
@@ -179,15 +187,81 @@ document.getElementById("gateForm").addEventListener("submit",async e=>{
   else{document.getElementById("gateErr").classList.add("on");document.getElementById("gateInput").value="";}
 });
 const cvs=document.getElementById("heart"),ctx=cvs.getContext("2d");
-let W,H,parts=[],burst=0,beat=0;
-const N=Math.min(720,Math.floor((innerWidth*innerHeight)/1400));
+let W,H,parts=[],burst=0,beat=0,t0=performance.now();
+const mobile=innerWidth<700;
+const N=mobile?280:520;
 function hp(t,s){return{x:16*Math.pow(Math.sin(t),3)*s,y:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*s};}
 function resize(){W=cvs.width=innerWidth*devicePixelRatio;H=cvs.height=innerHeight*devicePixelRatio;cvs.style.width=innerWidth+"px";cvs.style.height=innerHeight+"px";}
-function spawn(){parts=[];const s=Math.min(W,H)/42;for(let i=0;i<N;i++){const t=Math.random()*Math.PI*2;parts.push({t,s,x:(Math.random()-.5)*W,y:(Math.random()-.5)*H,r:.6+Math.random()*1.8,a:.25+Math.random()*.7,hue:340+Math.random()*28,layer:Math.random()});}}
-function tick(){beat+=.045;const pulse=1+Math.sin(beat)*.07+burst*.25;burst*=.94;ctx.clearRect(0,0,W,H);const cx=W/2,cy=H*.42;for(const p of parts){const q=hp(p.t+beat*.02,p.s*pulse);const tx=cx+q.x*(.85+p.layer*.2),ty=cy+q.y*(.85+p.layer*.2);p.x+=(tx-p.x)*.045;p.y+=(ty-p.y)*.045;ctx.beginPath();ctx.fillStyle=`hsla(${p.hue},80%,${68+p.layer*12}%,${p.a})`;ctx.arc(p.x,p.y,p.r*devicePixelRatio*(.8+pulse*.2),0,Math.PI*2);ctx.fill();}requestAnimationFrame(tick);}
-resize();spawn();tick();addEventListener("resize",()=>{resize();spawn();});
+function spawn(){
+  parts=[];
+  const s=Math.min(W,H)/38;
+  for(let i=0;i<N;i++){
+    const t=Math.random()*Math.PI*2;
+    const q=hp(t,s);
+    parts.push({t,s,x:q.x,y:q.y,life:Math.random(),spd:.35+Math.random()*.9,r:.7+Math.random()*1.6,hue:338+Math.random()*22,a:.35+Math.random()*.55});
+  }
+}
+function drawMiniHeart(x,y,r,c){
+  ctx.save();ctx.translate(x,y);ctx.scale(r/10,r/10);ctx.beginPath();
+  ctx.moveTo(0,3);ctx.bezierCurveTo(-9,-5,-10,-14,0,-8);ctx.bezierCurveTo(10,-14,9,-5,0,3);ctx.fillStyle=c;ctx.fill();ctx.restore();
+}
+function tick(now){
+  const dt=Math.min(32,now-t0);t0=now;
+  beat+=dt*0.0042;
+  const pulse=1+Math.sin(beat)*0.085+(burst>0?burst*0.18:0);
+  burst*=0.94;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2,cy=H*0.40,s=Math.min(W,H)/38*pulse;
+  for(const p of parts){
+    p.life+=0.006*p.spd;
+    if(p.life>1){p.life=0;p.t=Math.random()*Math.PI*2;}
+    const q=hp(p.t,s);
+    const out=1+p.life*0.55;
+    const x=cx+q.x*out,y=cy+q.y*out;
+    const fade=p.life<0.15?p.life/0.15:1-p.life;
+    drawMiniHeart(x,y,p.r*devicePixelRatio*(1.1-p.life*0.4),`hsla(${p.hue},86%,72%,${Math.max(0,p.a*fade)})`);
+  }
+  requestAnimationFrame(tick);
+}
+resize();spawn();requestAnimationFrame(tick);addEventListener("resize",()=>{resize();spawn();});
 document.getElementById("enterBtn").onclick=()=>{document.getElementById("intro").style.display="none";document.getElementById("main").classList.remove("hidden");scrollTo(0,0);};
 document.getElementById("pulse").onclick=()=>{burst=1;document.getElementById("fin").classList.add("show");};
+const lines=[
+  {t:0,text:"我們哭了，我們笑著"},
+  {t:7,text:"我們抬頭望天空，星星還亮著幾顆"},
+  {t:15,text:"我們唱著，時間的歌"},
+  {t:22,text:"才懂得相互擁抱，到底是為了什麼"},
+  {t:29,text:"因為我剛好遇見你，留下足跡才美麗"},
+  {t:36,text:"風吹花落淚如雨，不想分離"},
+  {t:43,text:"剛好遇見你，留下十年的期許"},
+  {t:50,text:"如果再相遇，我想我會記得你"}
+];
+const song=document.getElementById("song");
+const lyric=document.getElementById("lyric");
+lyric.innerHTML=lines.map(l=>`<span>${l.text}</span>`).join("");
+const spans=[...lyric.querySelectorAll("span")];
+function setLine(i){spans.forEach((s,n)=>s.classList.toggle("on",n===i));}
+song.addEventListener("timeupdate",()=>{
+  if(song.paused)return;
+  let i=0;for(let n=0;n<lines.length;n++) if(song.currentTime>=lines[n].t) i=n;
+  setLine(i);
+});
+song.addEventListener("pause",()=>{
+  let i=-1;for(let n=0;n<lines.length;n++) if(song.currentTime>=lines[n].t) i=n;
+  if(i>=0) setLine(i);
+});
+song.addEventListener("ended",()=>{spans.forEach(s=>s.classList.remove("on"));});
+const songBox=song.closest("section");
+if("IntersectionObserver" in window){
+  new IntersectionObserver(es=>{
+    if(!es[0].isIntersecting && !song.paused) song.pause();
+  },{threshold:0.12}).observe(songBox);
+  document.querySelectorAll("section").forEach(sec=>{
+    sec.classList.add("meet");
+    if(sec.getBoundingClientRect().top<innerHeight-40) sec.classList.add("in");
+    new IntersectionObserver(es=>{if(es[0].isIntersecting)sec.classList.add("in");},{threshold:0.12}).observe(sec);
+  });
+}
 </script>
 </body>
 </html>
