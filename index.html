@@ -53,10 +53,10 @@
     .when { font-size:12px; color:var(--gold); padding-top:3px; }
     .what strong { display:block; margin-bottom:4px; }
     .what span { color:var(--muted); font-size:13.5px; line-height:1.7; }
-    .photos { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .photo { aspect-ratio:3/4; border-radius:14px; overflow:hidden; border:1px solid rgba(232,213,181,.16); }
+    .photos { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:8px 0 16px; max-width:100%; }
+    .photo { aspect-ratio:3/4; border-radius:14px; overflow:hidden; border:1px solid rgba(232,213,181,.16); max-width:100%; }
     .photo.wide { grid-column:1/-1; aspect-ratio:4/3; }
-    .photo img { width:100%; height:100%; object-fit:cover; display:block; }
+    .photo img { width:100%; height:100%; max-width:100%; object-fit:cover; display:block; }
     .cap { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.6; }
     audio { width:100%; margin-top:8px; }
     .wishes { display:grid; gap:10px; }
@@ -69,7 +69,7 @@
     .fin { max-width:280px; color:var(--muted); font-size:15px; line-height:1.9; opacity:0; transition:opacity .8s; }
     .fin.show { opacity:1; }
     footer { text-align:center; color:var(--muted); font-size:12px; letter-spacing:.16em; }
-    .lyric { min-height:4.8em; margin-top:14px; text-align:center; font-size:17px; line-height:1.85; color:var(--cream); }
+    .lyric { min-height:4.8em; margin-top:14px; text-align:center; font-size:17px; line-height:1.85; color:var(--cream); max-width:100%; padding:0 4px; word-break:break-word; }
     .lyric span { display:block; opacity:0; transition:opacity .45s ease; }
     .lyric span.on { opacity:1; color:var(--rose); }
     .meet { opacity:0; transform:translateY(10px); transition:opacity .55s ease, transform .55s ease; }
@@ -103,8 +103,9 @@
     <article class="card letter">
       <p>詩琴：</p>
       <p>今天是你的生日。人還在新加坡，禮物還沒交到你手上。先把這一頁打開。</p>
-      <p>九月一日那通電話，我想清楚了。或許是你母親出車禍那晚，你主動聯繫我，把焦慮和不安說出來；也或許是平時的早安，語音裡的晚安。這些點滴讓我確定，我想和你在一起。我不了解你的過去，可是我不在乎。我在乎的是我們的未來。我想和你在一起。你呢。</p>
-      <p>赤繩早繫，白首永偏。縦然浮生如夢，百年如露，此情也當海枯石爛，無窮無盡。謹訂此約，往後餘生，請多多指教。</p>
+      <p>九月一日，我們透過通話，我向你說出心底的告白。</p>
+      <p>我想清楚了。或許是你母親出車禍那晚，你主動找我，傾訴心裡的焦慮與不安；也或許是日常裡你的早安、語音傳來的晚安。這些零碎的瞬間，讓我確認，我想要和你在一起。我尚未完全讀過你的過去，但我並不介懷。我更看重屬於我們的未來。我想和你在一起，你呢。</p>
+      <p>於是我和你定下約定：赤繩早繫，白首永偏。縦然浮生如夢，百年如露，往後餘生，請多多指教。</p>
       <p>伏見稲荷買的那條手鍊，代表守護。等你回來，親手給你。在那之前，先用這一頁把心放過來。</p>
       <p>生日快樂。願我能和你一起面對快樂與痛苦。從此以後，做你的太陽。</p>
       <p class="sign">紹禎　敬上</p>
@@ -166,6 +167,7 @@
       <div class="wish">願阿婆早日康復，願家裡漸漸安定。</div>
       <div class="wish">願這條手鍊交到你手上時，我們已經見過面。</div>
       <div class="wish">願往後的路走得清楚。我想和你在一起。</div>
+      <div class="wish">就算現在隔著一片海洋，這份心意從未動搖。</div>
     </div>
   </section>
   <section class="end">
