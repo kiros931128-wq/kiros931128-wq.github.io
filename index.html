@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#140d12" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>給詩琴 · 生日快樂</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#140d12; --rose:#f0b8c0; --gold:#e8d5b5; --cream:#f7efe6; --muted:rgba(247,239,230,.62);
+      --st:env(safe-area-inset-top,16px); --sb:env(safe-area-inset-bottom,16px); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html,body { height:100%; background:var(--bg); color:var(--cream); font-family:"Noto Serif TC",serif; }
+    body { overflow-x:hidden; }
+    canvas#heart { position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+    .gate { position:fixed; inset:0; z-index:30; display:flex; align-items:center; justify-content:center;
+      padding:calc(var(--st) + 24px) 28px; background:rgba(20,13,18,.72); backdrop-filter:blur(10px); }
+    .gate.hide { display:none; }
+    .box { width:100%; max-width:320px; text-align:center; }
+    .script { font-family:"Great Vibes",cursive; color:var(--rose); line-height:1; }
+    .gate .script { font-size:40px; }
+    .box h2 { letter-spacing:.32em; font-weight:600; font-size:20px; margin:10px 0 12px; }
+    .box p { color:var(--muted); font-size:14px; line-height:1.85; margin-bottom:20px; }
+    input,button { font-family:inherit; }
+    input { width:100%; background:rgba(255,255,255,.05); border:1px solid rgba(232,213,181,.28);
+      border-radius:14px; color:var(--cream); font-size:20px; letter-spacing:.32em; text-align:center; padding:14px; }
+    .btn { margin-top:14px; width:100%; background:transparent; color:var(--gold);
+      border:1px solid rgba(232,213,181,.35); border-radius:999px; padding:12px; letter-spacing:.24em; font-size:12px; }
+    .err { min-height:1.3em; margin-top:10px; font-size:12px; color:var(--rose); opacity:0; }
+    .err.on { opacity:1; }
+    .intro { position:relative; z-index:1; min-height:100dvh; display:flex; flex-direction:column;
+      align-items:center; justify-content:flex-end; text-align:center; padding:0 24px calc(var(--sb) + 56px); pointer-events:none; }
+    .intro h1 { font-size:34px; letter-spacing:.2em; font-weight:600; }
+    .intro .script { font-size:44px; margin-bottom:6px; }
+    .intro .date { color:var(--gold); letter-spacing:.28em; font-size:12px; margin:10px 0 18px; }
+    .tap { pointer-events:auto; border:1px solid rgba(232,213,181,.35); background:transparent;
+      color:var(--gold); border-radius:999px; padding:12px 22px; letter-spacing:.22em; font-size:12px; }
+    .hint { margin-top:14px; font-size:11px; letter-spacing:.2em; color:rgba(232,213,181,.55); }
+    .wrap { position:relative; z-index:1; max-width:460px; margin:0 auto; padding:12px 22px calc(var(--sb) + 48px); }
+    .wrap.hidden { display:none; }
+    section { margin:42px 0; }
+    .label { font-size:11px; letter-spacing:.34em; color:var(--gold); margin-bottom:12px; }
+    .card { background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+      border:1px solid rgba(232,213,181,.12); border-radius:18px; padding:22px 18px; }
+    .letter p { font-size:15.5px; line-height:2; margin-bottom:1em; }
+    .sign { text-align:right; color:var(--rose); letter-spacing:.1em; }
+    .moments { display:grid; gap:16px; }
+    .moment { display:grid; grid-template-columns:86px 1fr; gap:12px; }
+    .when { font-size:12px; color:var(--gold); padding-top:3px; }
+    .what strong { display:block; margin-bottom:4px; }
+    .what span { color:var(--muted); font-size:13.5px; line-height:1.7; }
+    .photos { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .photo { aspect-ratio:3/4; border-radius:14px; overflow:hidden; border:1px solid rgba(232,213,181,.16); }
+    .photo.wide { grid-column:1/-1; aspect-ratio:4/3; }
+    .photo img { width:100%; height:100%; object-fit:cover; display:block; }
+    .cap { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.6; }
+    audio { width:100%; margin-top:8px; }
+    .wishes { display:grid; gap:10px; }
+    .wish { padding:14px 16px; border-radius:14px; background:rgba(240,184,192,.08);
+      border:1px solid rgba(240,184,192,.12); font-size:14.5px; line-height:1.75; }
+    .end { min-height:70dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:14px; }
+    .end .script { font-size:42px; }
+    .pulse-btn { width:168px; height:168px; border-radius:50%; border:1px solid rgba(240,184,192,.35);
+      background:rgba(240,184,192,.08); color:var(--cream); letter-spacing:.16em; font-size:13px; font-family:inherit; }
+    .fin { max-width:280px; color:var(--muted); font-size:15px; line-height:1.9; opacity:0; transition:opacity .8s; }
+    .fin.show { opacity:1; }
+    footer { text-align:center; color:var(--muted); font-size:12px; letter-spacing:.16em; }
+  </style>
+</head>
+<body>
+<canvas id="heart"></canvas>
+<div class="gate" id="gate">
+  <div class="box">
+    <p class="script">For you</p>
+    <h2>詩琴</h2>
+    <p>先輸入密碼，再打開這封信。</p>
+    <form id="gateForm">
+      <input id="gateInput" type="password" inputmode="numeric" autocomplete="off" placeholder="••••" />
+      <button class="btn" type="submit">打開</button>
+    </form>
+    <p class="err" id="gateErr">密碼不對，再試一次</p>
+  </div>
+</div>
+<header class="intro" id="intro">
+  <p class="script">Happy Birthday</p>
+  <h1>詩琴</h1>
+  <p class="date">九月三十日</p>
+  <button class="tap" id="enterBtn" type="button">輕觸進入</button>
+  <p class="hint">心跳是為你跳的</p>
+</header>
+<main class="wrap hidden" id="main">
+  <section>
+    <p class="label">一封信</p>
+    <article class="card letter">
+      <p>詩琴：</p>
+      <p>今天是你的生日。人還在新加坡，禮物還沒交到你手上。先把這一頁打開。</p>
+      <p>我想清楚，是從那晚開始的。你母親出事，你主動找我，把焦慮和不安說出來。後來是你的早安，是語音裡的晚安。我不了解你的全部過去，可是我不在乎。我在乎的是未來。我想和你在一起。</p>
+      <p>九月一日那通電話裡說過的話，今天還算數：赤繩早繫，白首永偏。往後餘生，請多多指教。</p>
+      <p>伏見稲荷買的那條手鍊，代表守護。等你回來，親手給你。在那之前，先用這一頁把心放過來。</p>
+      <p>生日快樂。願我能和你一起面對快樂與痛苦。從此以後，做你的太陽。</p>
+      <p class="sign">紹禎　敬上</p>
+    </article>
+  </section>
+  <section>
+    <p class="label">一些日子</p>
+    <div class="card moments">
+      <div class="moment"><div class="when">八月二十</div><div class="what"><strong>遇見</strong><span>在線上認識。那天之後，互傳了第一張照片。</span></div></div>
+      <div class="moment"><div class="when">八月二十二</div><div class="what"><strong>剛好遇見你</strong><span>還沒在一起。我第一次唱給你聽。</span></div></div>
+      <div class="moment"><div class="when">九月一日</div><div class="what"><strong>在一起</strong><span>打電話說清楚。從那一天開始，是我們。</span></div></div>
+      <div class="moment"><div class="when">九月三十</div><div class="what"><strong>你的生日</strong><span>人隔著海。心意不過夜。</span></div></div>
+    </div>
+  </section>
+  <section>
+    <p class="label">你</p>
+    <div class="photos">
+      <div class="photo"><img src="p-her-close.jpg" alt="" /></div>
+      <div class="photo"><img src="p-her-peace.jpg" alt="" /></div>
+      <div class="photo"><img src="p-her-park.jpg" alt="" /></div>
+      <div class="photo"><img src="p-her-sit.jpg" alt="" /></div>
+    </div>
+  </section>
+  <section>
+    <p class="label">第一天互換的照片</p>
+    <div class="photos">
+      <div class="photo"><img src="p-her-mirror.jpg" alt="" /></div>
+      <div class="photo"><img src="p-him-first.jpg" alt="" /></div>
+    </div>
+    <p class="cap">還沒見過面。先把臉交給彼此。</p>
+  </section>
+  <section>
+    <p class="label">等你回來再交到手上</p>
+    <div class="photos"><div class="photo wide"><img src="p-bracelet.jpg" alt="" /></div></div>
+    <p class="cap">在伏見稲荷買的。守護。想和你一起面對所有快樂與痛苦。</p>
+  </section>
+  <section>
+    <p class="label">那時人在大阪</p>
+    <div class="photos">
+      <div class="photo"><img src="p-osaka-bridge.jpg" alt="" /></div>
+      <div class="photo"><img src="p-osaka-open.jpg" alt="" /></div>
+    </div>
+    <p class="cap">實習還沒結束的那些白天。想以後能面對面走一段。</p>
+  </section>
+  <section>
+    <p class="label">第一次唱給你聽</p>
+    <div class="card">
+      <p class="cap" style="margin-top:0">八月二十二日 · 剛好遇見你</p>
+      <audio controls preload="metadata" playsinline><source src="song.m4a" type="audio/mp4" /></audio>
+    </div>
+  </section>
+  <section>
+    <p class="label">想對你說</p>
+    <div class="wishes">
+      <div class="wish">願你被好好對待，不必一個人硬撐。</div>
+      <div class="wish">願媽媽一天天好起來，願家裡漸漸安定。</div>
+      <div class="wish">願這條手鍊到你手上時，我們已經見過面。</div>
+      <div class="wish">願未來比過去清楚。我想和你在一起。</div>
+    </div>
+  </section>
+  <section class="end">
+    <p class="script">Stay</p>
+    <p class="label">把掌心放在圓上</p>
+    <button class="pulse-btn" id="pulse" type="button">長按收下</button>
+    <p class="fin" id="fin">信收到了。<br>守護先放在這裡。<br>人回來，手鍊也回來。</p>
+  </section>
+  <footer>為詩琴而寫　九月三十日</footer>
+</main>
+<script>
+const PASS="25636ecf995898a35b0d63c25a9db541a32a4c5e9ca3500e0c793af0f259dd05";
+async function sha256(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+const gate=document.getElementById("gate");
+if(sessionStorage.getItem("opened")==="1") gate.classList.add("hide");
+document.getElementById("gateForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(await sha256(document.getElementById("gateInput").value.trim())===PASS){gate.classList.add("hide");sessionStorage.setItem("opened","1");}
+  else{document.getElementById("gateErr").classList.add("on");document.getElementById("gateInput").value="";}
+});
+const cvs=document.getElementById("heart"),ctx=cvs.getContext("2d");
+let W,H,parts=[],burst=0,beat=0;
+const N=Math.min(720,Math.floor((innerWidth*innerHeight)/1400));
+function hp(t,s){return{x:16*Math.pow(Math.sin(t),3)*s,y:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*s};}
+function resize(){W=cvs.width=innerWidth*devicePixelRatio;H=cvs.height=innerHeight*devicePixelRatio;cvs.style.width=innerWidth+"px";cvs.style.height=innerHeight+"px";}
+function spawn(){parts=[];const s=Math.min(W,H)/42;for(let i=0;i<N;i++){const t=Math.random()*Math.PI*2;parts.push({t,s,x:(Math.random()-.5)*W,y:(Math.random()-.5)*H,r:.6+Math.random()*1.8,a:.25+Math.random()*.7,hue:340+Math.random()*28,layer:Math.random()});}}
+function tick(){beat+=.045;const pulse=1+Math.sin(beat)*.07+burst*.25;burst*=.94;ctx.clearRect(0,0,W,H);const cx=W/2,cy=H*.42;for(const p of parts){const q=hp(p.t+beat*.02,p.s*pulse);const tx=cx+q.x*(.85+p.layer*.2),ty=cy+q.y*(.85+p.layer*.2);p.x+=(tx-p.x)*.045;p.y+=(ty-p.y)*.045;ctx.beginPath();ctx.fillStyle=`hsla(${p.hue},80%,${68+p.layer*12}%,${p.a})`;ctx.arc(p.x,p.y,p.r*devicePixelRatio*(.8+pulse*.2),0,Math.PI*2);ctx.fill();}requestAnimationFrame(tick);}
+resize();spawn();tick();addEventListener("resize",()=>{resize();spawn();});
+document.getElementById("enterBtn").onclick=()=>{document.getElementById("intro").style.display="none";document.getElementById("main").classList.remove("hidden");scrollTo(0,0);};
+document.getElementById("pulse").onclick=()=>{burst=1;document.getElementById("fin").classList.add("show");};
+</script>
+</body>
+</html>
